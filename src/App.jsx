@@ -4,7 +4,7 @@ import './App.css'
 import authService from './appwrite/auth'
 import {login , logout} from './store/authSlice'
 import { Outlet } from 'react-router-dom'
-import { Header, Footer } from './components'
+import { Header, Footer, TW_Footer } from './components'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -32,7 +32,8 @@ function App() {
         <main>
           <Outlet/>
         </main>
-        <Footer/>
+        {/* <Footer/> */}
+        <TW_Footer/>
       </div>
     </div>
   ) :  null;

@@ -12,6 +12,7 @@ import PostForm from "./post-form/PostForm";
 import PostCard from "./PostCard"
 import AuthLayout from "./AuthLayout"
 import Select from "./Select";
+import TW_Footer from "./Footer/TW_Footer";
 
 export {
     Header,
@@ -27,5 +28,6 @@ export {
     PostForm,
     PostCard,
     AuthLayout,
-    Select
+    Select,
+    TW_Footer
 }

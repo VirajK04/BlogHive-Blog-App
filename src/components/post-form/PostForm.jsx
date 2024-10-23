@@ -47,6 +47,7 @@ function PostForm({post}) {
         }
       }
     }
+    navigate('/')
   }
 
   const slugTransform = useCallback((value) => {
