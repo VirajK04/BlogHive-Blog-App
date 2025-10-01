@@ -27,9 +27,9 @@ function App() {
   return !loading ? (
     <div className='min-h-screen flex flex-wrap content-between bg-gray-200'>
       
-      <div className="w-full block">
+      <div className="w-full flex flex-col min-h-screen">
         <Header/>
-        <main>
+        <main className="flex-grow">
           <Outlet/>
         </main>
         {/* <Footer/> */}
