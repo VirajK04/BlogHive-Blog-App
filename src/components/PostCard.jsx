@@ -8,9 +8,11 @@ function PostCard({$id, title, featuredImage}) {
     <Link to={`/post/${$id}`}>
         <div className='w-full bg-gray-100 rounded-xl p-4'>
             <div className='w-full justify-center mb-4'>
-                <img src={appwriteService.getFilePreview(featuredImage)} alt={title}
-                className='rounded-xl' />
-
+                {/* Only render the image if a featuredImage ID exists */}
+                {featuredImage && (
+                    <img src={appwriteService.getFilePreview(featuredImage)} alt={title}
+                    className='rounded-xl' />
+                )}
             </div>
             <h2
             className='text-xl font-bold'
@@ -19,6 +21,5 @@ function PostCard({$id, title, featuredImage}) {
     </Link>
   )
 }
-
 
 export default PostCard
