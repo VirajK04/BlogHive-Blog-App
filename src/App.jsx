@@ -4,7 +4,7 @@ import './App.css'
 import authService from './appwrite/auth'
 import {login , logout} from './store/authSlice'
 import { Outlet } from 'react-router-dom'
-import { Header, Footer, TW_Footer } from './components'
+import { Header, Footer } from './components'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -25,16 +25,12 @@ function App() {
   
 
   return !loading ? (
-    <div className='min-h-screen flex flex-wrap content-between bg-gray-200'>
-      
-      <div className="w-full flex flex-col min-h-screen">
-        <Header/>
-        <main className="flex-grow">
-          <Outlet/>
-        </main>
-        {/* <Footer/> */}
-        <TW_Footer/>
-      </div>
+    <div className='min-h-screen flex flex-col bg-slate-50 text-slate-800 antialiased'>
+      <Header/>
+      <main className="flex-grow w-full">
+        <Outlet/>
+      </main>
+      <Footer/>
     </div>
   ) :  null;
 }
