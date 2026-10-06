@@ -20,34 +20,35 @@ function PostForm({post}) {
 
   const submit = async (data) => {
     if (post) {
-      data.image[0] ? appwriteService.uploadFile(data.image[0]): null
+      const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null
 
-      if (file){
-        appwriteService.deleteFile(post.featuredImage)
+      if (file && post.featuredImage) {
+        await appwriteService.deleteFile(post.featuredImage)
       }
       
-      const dbPost = await appwriteService.updatePost(post.$id ,{...data, featuredImage: file? file.$id : undefined})
+      const dbPost = await appwriteService.updatePost(post.$id, {
+        ...data,
+        featuredImage: file ? file.$id : undefined
+      })
       
-      if(dbPost){
-        navigate(`/posts/${dbPost.$id}`)
+      if (dbPost) {
+        navigate(`/post/${dbPost.$id}`)
       }
-    }
-    else{
+    } else {
       const file = await appwriteService.uploadFile(data.image[0])
       
-      if(file){
+      if (file) {
         const fileId = file.$id
         data.featuredImage = fileId
         const dbPost = await appwriteService.createPost({
           ...data,
-          userId : userData.$id,
+          userId: userData.$id,
         })
-        if(dbPost){
-          navigate(`/post/${fileId}`)
+        if (dbPost) {
+          navigate(`/post/${dbPost.$id}`)
         }
       }
     }
-    navigate('/')
   }
 
   const slugTransform = useCallback((value) => {
@@ -100,12 +101,12 @@ function PostForm({post}) {
                     accept="image/png, image/jpg, image/jpeg, image/gif"
                     {...register("image", { required: !post })}
                 />
-                {post && (
-                    <div className="w-full mb-4">
+                {post && post.featuredImage && (
+                    <div className="w-full h-48 mb-4 overflow-hidden rounded-lg bg-gray-100">
                         <img
                             src={appwriteService.getFilePreview(post.featuredImage)}
                             alt={post.title}
-                            className="rounded-lg"
+                            className="w-full h-full object-cover rounded-lg"
                         />
                     </div>
                 )}

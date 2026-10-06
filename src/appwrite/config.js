@@ -35,7 +35,7 @@ export class Service{
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
-                appwriteCollectionId,
+                conf.appwriteCollectionId,
                 slug,
                 {
                     title,
@@ -118,7 +118,16 @@ export class Service{
     }
 
     getFilePreview(fileId){
-        return this.bucket.getFilePreview(
+        if (!fileId) return "";
+        return this.bucket.getFileView(
+            conf.appwriteBucketId,
+            fileId
+        )
+    }
+
+    getFileView(fileId){
+        if (!fileId) return "";
+        return this.bucket.getFileView(
             conf.appwriteBucketId,
             fileId
         )
