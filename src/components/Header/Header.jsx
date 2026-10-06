@@ -1,12 +1,53 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Container, Logo , LogoutBtn } from '../index'
 import { Link } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import authService from '../../appwrite/auth'
+import { login as authLogin } from '../../store/authSlice'
+import conf from '../../conf/conf'
 
 const Header = () => {
   const authStatus = useSelector((state) => state.auth.status)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const [demoLoading, setDemoLoading] = useState(false)
+
+  const handleDemoLogin = async () => {
+    setDemoLoading(true)
+    try {
+      let session
+      try {
+        session = await authService.login({
+          email: conf.demoEmail,
+          password: conf.demoPassword,
+        })
+      } catch (err) {
+        if (err?.code === 409) {
+          await authService.logout()
+          session = await authService.login({
+            email: conf.demoEmail,
+            password: conf.demoPassword,
+          })
+        } else {
+          throw err
+        }
+      }
+
+      if (session) {
+        const userData = await authService.getCurrentUser()
+        if (userData) {
+          dispatch(authLogin({ userData }))
+        }
+        navigate('/')
+      }
+    } catch (error) {
+      console.error('Demo login error:', error)
+      alert(error.message || 'Demo login failed.')
+    } finally {
+      setDemoLoading(false)
+    }
+  }
 
   const naItems = [
     {
@@ -58,6 +99,17 @@ const Header = () => {
                 >{item.name}</button>
               </li>
             ) : null
+            )}
+            {!authStatus && conf.enableDemoLogin && (
+              <li>
+                <button
+                  onClick={handleDemoLogin}
+                  disabled={demoLoading}
+                  className='ml-2 px-4 py-2 duration-200 text-white font-medium bg-blue-600 hover:bg-blue-700 rounded-full text-sm cursor-pointer shadow-sm disabled:opacity-60 transition-colors'
+                >
+                  {demoLoading ? 'Logging in...' : 'Demo Login'}
+                </button>
+              </li>
             )}
             {authStatus && (
               <li>

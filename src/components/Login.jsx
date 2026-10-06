@@ -6,12 +6,14 @@ import {Button, Input, Logo} from "./index"
 import {useDispatch} from "react-redux"
 import authService from "../appwrite/auth"
 import {useForm} from "react-hook-form"
+import conf from "../conf/conf"
 
 function Login() {
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const {register, handleSubmit} = useForm()
     const [error, setError] = useState("")
+    const [demoLoading, setDemoLoading] = useState(false)
 
     const login = async(data) => {
         setError("")
@@ -24,6 +26,40 @@ function Login() {
             }
         } catch (error) {
             setError(error.message)
+        }
+    }
+
+    const handleDemoLogin = async () => {
+        setError("")
+        setDemoLoading(true)
+        try {
+            let session
+            try {
+                session = await authService.login({
+                    email: conf.demoEmail,
+                    password: conf.demoPassword,
+                })
+            } catch (err) {
+                if (err?.code === 409) {
+                    await authService.logout()
+                    session = await authService.login({
+                        email: conf.demoEmail,
+                        password: conf.demoPassword,
+                    })
+                } else {
+                    throw err
+                }
+            }
+
+            if (session) {
+                const userData = await authService.getCurrentUser()
+                if (userData) dispatch(authLogin({ userData }))
+                navigate("/")
+            }
+        } catch (error) {
+            setError(error.message)
+        } finally {
+            setDemoLoading(false)
         }
     }
 
@@ -74,6 +110,17 @@ function Login() {
                 type="submit"
                 className="w-full"
                 >Sign in</Button>
+
+                {conf.enableDemoLogin && (
+                    <button
+                        type="button"
+                        onClick={handleDemoLogin}
+                        disabled={demoLoading}
+                        className="w-full py-2.5 px-4 bg-white border border-blue-600 text-blue-600 hover:bg-blue-50 font-medium rounded-lg text-sm transition-colors duration-200 disabled:opacity-60 cursor-pointer shadow-sm"
+                    >
+                        {demoLoading ? 'Logging in as Demo...' : 'Instant Demo Login (test@abc.com)'}
+                    </button>
+                )}
             </div>
         </form>
         </div>
